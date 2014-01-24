@@ -13,11 +13,6 @@ public:
     ~CoordSys() {}
 
     /**
-     * Return a copy
-     */
-    CONST_PTR(CoordSys) clone() const { return boost::make_shared<CoordSys>(_name); };
-
-    /**
      * Get name as <className>(arg1, arg2...)
      *
      * The name must be unique for a unique coordinate system,

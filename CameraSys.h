@@ -58,7 +58,6 @@ class PupilSys : public NonDetectorSys {
 public:
     explicit PupilSys() : geom::CameraSys("PupilSys()") {}
     ~PupilSys() {}
-    CONST_PTR(CameraSys) clone() const { return boost::make_shared<PupilSys>(); }
 };
 
 /**
@@ -68,7 +67,6 @@ class FocalPlaneSys : public NonDetectorSys {
 public:
     explicit FocalPlaneSys() : geom::CameraSys("FocalPlaneSys()") {}
     ~FocalPlaneSys() {}
-    CONST_PTR(CameraSys) clone() const { return boost::make_shared<FocalPlaneSys>(); }
 };
 
 /**
@@ -78,7 +76,6 @@ class PixelSys : public DetectorSys {
 public:
     explicit DetectorSys(std::string _detectorName) : DetectorSys(detectorName) {}
     ~DetectorSys() {}
-    CONST_PTR(CameraSys) clone() const { return boost::make_shared<PixelSys>(_detectorName); }
 private:
     std::string _getClassName() const { return "PixelSys"; }
 };
