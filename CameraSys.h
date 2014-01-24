@@ -1,81 +1,25 @@
 // -*- lsst-c++ -*-
 
-/**
- * Virtual base class for camera and detector coordinate systems
- */
-class CameraSys : public geom::CoordSys {
-public:
-    /**
-     * Get detector name, or "" if not detector-based
-     */
-    std::string getDetectorName() const = 0;
+namespace camera {
 
-    /**
-     * Is this coordinate system detector-based (hence can detector name be non-blank)?
-     */
-    bool isDetectorBased() const = 0;
+// This class is *NOT* a CoordSys subclass: it's the part of a Detector-dependent CoordSys that doesn't
+// include the Detector identifier.
+class DetectorSys {
+public:
+    explicit DetectorSys(std::string const & name) : _name(name) {}
+
+    std::string const & getName() const { return _name; }
+
+    // ... hash and comparison stuff, just like CoordSys
 };
 
-/**
- * Virtual base class for non-detector-based coordinate systems, such as focal plane and pupil
- */
-class NonDetectorSys : public CameraSys {
-public:
-    std::string getDetectorName() const { return ""; }
-    bool isDetectorBased() const { return false; }
-};
+// We don't need separate classes for these - just separate instances.
+namespace sys {
 
-/**
- * Virtual base class for detector-based coordinate systems, such as pixels
- */
-class DetectorSys : public CameraSys {
-public:
-    explicit DetectorSys(std::string const &detectorName)
-    :
-        _detectorName(detectorName), _name(_makeName()
-    {}
-    ~DetectorSys() {}
+extern CoordSys PUPIL;
+extern CoordSys FOCAL_PLANE;
+extern DetectorSys PIXEL;
 
-    std::string getDetectorName() const { return _detectorName; }
-    bool isDetectorBased() const { return true; }
-private:
-    /** return the class name; used by _makeName; subclasses must override */
-    std::string _getClassName() const = 0;
+} // namespace sys
 
-    /** construct the unique name */
-    std::string _makeName() const {
-        std::ostringstream os;
-        os << getClassName() << "(" << getDetectorName() << ")";
-        return os.str();
-    }
-    std::string _detectorName;  ///< detector name
-};
-
-/**
- * Pupil coordinates
- */
-class PupilSys : public NonDetectorSys {
-public:
-    explicit PupilSys() : geom::CameraSys("PupilSys()") {}
-    ~PupilSys() {}
-};
-
-/**
- * Focal plane coordinates
- */
-class FocalPlaneSys : public NonDetectorSys {
-public:
-    explicit FocalPlaneSys() : geom::CameraSys("FocalPlaneSys()") {}
-    ~FocalPlaneSys() {}
-};
-
-/**
- * Nominal pixels in a detector (not counting imperfections, "tree rings", etc.)
- */
-class PixelSys : public DetectorSys {
-public:
-    explicit DetectorSys(std::string _detectorName) : DetectorSys(detectorName) {}
-    ~DetectorSys() {}
-private:
-    std::string _getClassName() const { return "PixelSys"; }
-};
+} // namespace camera

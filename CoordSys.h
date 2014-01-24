@@ -18,7 +18,7 @@ public:
      * The name must be unique for a unique coordinate system,
      * since it is used by getHash operator== and other operators.
      */
-    std::string getName() { return _name; };
+    std::string const & getName() const { return _name; };
 
     /** get a hash; allows use in std::unordered_map */
     size_t getHash() const {
@@ -40,7 +40,8 @@ public:
         return _name < rhs._name;
     }
 public:
-    std::string _name;
+    std::string _name; // could make this a flyweight or shared_ptr if needed for performance, but at
+                       // least on G++, std::string is already copy-on-write, so that would be redundant.
 };
 
 } // namespace geom
