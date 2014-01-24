@@ -1,5 +1,7 @@
 // -*- lsst-c++ -*-
 
+namespace geom {
+
 /**
  * Base class for coordinate system keys used in in TransformRegistry
  *
@@ -7,7 +9,7 @@
  */
 class CoordSys {
 public:
-    explicit CoordSys( std::string &name ) : _name(name) {}
+    explicit CoordSys( std::string const &name ) : _name(name) {}
     ~CoordSys() {}
 
     /**
@@ -25,26 +27,28 @@ public:
 
     /** get a hash; allows use in std::unordered_map */
     size_t getHash() const {
-        return hash(_name());
+        return hash(_name);
     }
 
     /** equals operator; based on name */
-    bool operator==(CoordSys &rhs) const {
-        return _name() == rhs._name();
+    bool operator==(CoordSys const &rhs) const {
+        return _name == rhs._name;
     }
 
     /** not equals operator; based on name */
-    bool operator!=(CoordSys &rhs) const {
-        return _name() != rhs._name();
+    bool operator!=(CoordSys const &rhs) const {
+        return _name != rhs._name;
     }
 
     /** less-than operator; based on name; allows use in std::map */
-    bool operator<(CoordSys.rhs) const {
-        return _name() < rhs._name();
+    bool operator<(CoordSys const &rhs) const {
+        return _name < rhs._name;
     }
 public:
     std::string _name;
 };
+
+} // namespace geom
 
 namespace std {
     /** add hash<CoordSys>(CoordSys) to std namespace
@@ -53,7 +57,7 @@ namespace std {
      * without specifying the hash template parameter
      */
     template <> struct hash<CoordSys> {
-        size_t operator()(const CoordSys & x) const {
+        size_t operator()(CoordSys const & x) const {
                 return CoordSys.getHash();
         }
     };

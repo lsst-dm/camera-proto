@@ -3,7 +3,7 @@
 /**
  * Virtual base class for camera and detector coordinate systems
  */
-class CameraSys : geom::CoordSys {
+class CameraSys : public geom::CoordSys {
 public:
     /**
      * Get detector name, or "" if not detector-based
@@ -19,7 +19,7 @@ public:
 /**
  * Virtual base class for non-detector-based coordinate systems, such as focal plane and pupil
  */
-class NonDetectorSys : CameraSys {
+class NonDetectorSys : public CameraSys {
 public:
     std::string getDetectorName() const { return ""; }
     bool isDetectorBased() const { return false; }
@@ -28,7 +28,7 @@ public:
 /**
  * Virtual base class for detector-based coordinate systems, such as pixels
  */
-class DetectorSys : CameraSys {
+class DetectorSys : public CameraSys {
 public:
     explicit DetectorSys(std::string const &detectorName)
     :
@@ -54,25 +54,28 @@ private:
 /**
  * Pupil coordinates
  */
-class PupilSys : NonDetectorSys {
+class PupilSys : public NonDetectorSys {
+public:
     explicit PupilSys() : geom::CameraSys("PupilSys()") {}
     ~PupilSys() {}
     CONST_PTR(CameraSys) clone() const { return boost::make_shared<PupilSys>(); }
-}
+};
 
 /**
  * Focal plane coordinates
  */
-class FocalPlaneSys : NonDetectorSys {
+class FocalPlaneSys : public NonDetectorSys {
+public:
     explicit FocalPlaneSys() : geom::CameraSys("FocalPlaneSys()") {}
     ~FocalPlaneSys() {}
     CONST_PTR(CameraSys) clone() const { return boost::make_shared<FocalPlaneSys>(); }
-}
+};
 
 /**
  * Nominal pixels in a detector (not counting imperfections, "tree rings", etc.)
  */
-class PixelSys : DetectorSys {
+class PixelSys : public DetectorSys {
+public:
     explicit DetectorSys(std::string _detectorName) : DetectorSys(detectorName) {}
     ~DetectorSys() {}
     CONST_PTR(CameraSys) clone() const { return boost::make_shared<PixelSys>(_detectorName); }
